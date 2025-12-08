@@ -1,0 +1,133 @@
+{
+  "users": [
+    {
+      "id": "1765134032167",
+      "name": "Rishav kumar",
+      "email": "chrishabh2002@gmail.com",
+      "password": "$2a$10$uOKp9WbMahcu3f.o0JxDWuSWnFv1ijBO/9AhhzJ6sqShlx6RCsm4m",
+      "role": "Editor",
+      "bio": "Neural Interface User",
+      "avatar": "https://api.dicebear.com/7.x/bottts/svg?seed=Rishav kumar",
+      "verified": true,
+      "createdAt": "2025-12-07T19:00:32.167Z",
+      "lastActive": "2025-12-08T07:01:14.318Z",
+      "currentAction": "Logged In"
+    }
+  ],
+  "organizations": [
+    {
+      "id": "org_1765132475590",
+      "name": "MomntumAI",
+      "plan": "Enterprise",
+      "status": "Suspended",
+      "licenseKey": "NFLX-497-TZMX-4707",
+      "createdAt": "2025-12-07T18:34:35.590Z",
+      "maxUsers": 500
+    }
+  ],
+  "logs": [
+    {
+      "id": "1765132475592",
+      "action": "Organization Created",
+      "user": "Super Admin",
+      "timestamp": "12:04:35 am",
+      "details": "Provisioned Enterprise license for MomntumAI",
+      "type": "info"
+    },
+    {
+      "id": "1765133981864",
+      "action": "User Deleted",
+      "user": "Admin",
+      "timestamp": "12:29:41 am",
+      "details": "Deleted user ID 1765102886971",
+      "type": "warning"
+    },
+    {
+      "id": "1765133987187",
+      "action": "User Deleted",
+      "user": "Admin",
+      "timestamp": "12:29:47 am",
+      "details": "Deleted user ID 1765104138673",
+      "type": "warning"
+    },
+    {
+      "id": "1765134032167",
+      "action": "User Created",
+      "user": "Admin",
+      "timestamp": "12:30:32 am",
+      "details": "Created user chrishabh2002@gmail.com as Editor",
+      "type": "info"
+    },
+    {
+      "id": "1765134557083",
+      "action": "User Login",
+      "user": "Rishav kumar",
+      "timestamp": "2025-12-07T19:09:17.083Z",
+      "details": "Successful authentication",
+      "type": "info"
+    },
+    {
+      "id": "1765135430850",
+      "action": "User Login",
+      "user": "Rishav kumar",
+      "timestamp": "2025-12-07T19:23:50.850Z",
+      "details": "Successful authentication",
+      "type": "info"
+    },
+    {
+      "id": "1765135586156",
+      "action": "User Login",
+      "user": "Rishav kumar",
+      "timestamp": "2025-12-07T19:26:26.156Z",
+      "details": "Successful authentication",
+      "type": "info"
+    },
+    {
+      "id": "1765136230334",
+      "action": "User Login",
+      "user": "Rishav kumar",
+      "timestamp": "2025-12-07T19:37:10.334Z",
+      "details": "Successful authentication",
+      "type": "info"
+    },
+    {
+      "id": "1765136258154",
+      "action": "User Login",
+      "user": "Rishav kumar",
+      "timestamp": "2025-12-07T19:37:38.154Z",
+      "details": "Successful authentication",
+      "type": "info"
+    },
+    {
+      "id": "1765136324380",
+      "action": "User Login",
+      "user": "Rishav kumar",
+      "timestamp": "2025-12-07T19:38:44.380Z",
+      "details": "Successful authentication",
+      "type": "info"
+    },
+    {
+      "id": "1765137338125",
+      "action": "User Login",
+      "user": "Rishav kumar",
+      "timestamp": "2025-12-07T19:55:38.125Z",
+      "details": "Successful authentication",
+      "type": "info"
+    },
+    {
+      "id": "1765177274318",
+      "action": "User Login",
+      "user": "Rishav kumar",
+      "timestamp": "2025-12-08T07:01:14.318Z",
+      "details": "Successful authentication",
+      "type": "info"
+    }
+  ],
+  "transactions": [],
+  "globalSettings": {
+    "maintenanceMode": false,
+    "allowSignups": true,
+    "systemVersion": "2.5.0-RC1",
+    "lastBackup": "2025-12-07T19:06:53.930Z"
+  }
+}

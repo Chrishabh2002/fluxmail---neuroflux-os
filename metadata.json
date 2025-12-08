@@ -1,0 +1,5 @@
+{
+  "name": "FluxMail - NeuroFlux OS",
+  "description": "An autonomous enterprise-grade AI email agent that classifies, extracts tasks, and generates intelligent responses using Gemini.",
+  "requestFramePermissions": []
+}
