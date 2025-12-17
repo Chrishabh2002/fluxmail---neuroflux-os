@@ -16,34 +16,44 @@ import cors from "cors";
 
 dotenv.config();
 
-// --- SCALABILITY: CLUSTERING ---
-const numCPUs = os.cpus().length;
+// --- SCALABILITY: CLUSTERING (Temporarily Disabled for Stability) ---
+// const numCPUs = os.cpus().length;
 
-if (cluster.isPrimary && process.env.NODE_ENV === 'production') {
-    console.log(`Primary ${process.pid} is running`);
-    for (let i = 0; i < numCPUs; i++) cluster.fork();
-    cluster.on('exit', (worker) => cluster.fork());
-} else {
-    startServer();
-}
+// if (cluster.isPrimary && process.env.NODE_ENV === 'production') {
+//     console.log(`Primary ${process.pid} is running`);
+//     for (let i = 0; i < numCPUs; i++) cluster.fork();
+//     cluster.on('exit', (worker) => cluster.fork());
+// } else {
+//     startServer();
+// }
+
+startServer();
 
 function startServer() {
     const app = express();
+
+    // --- MIDDLEWARE (Must be before routes) ---
+    app.use(compression());
+    app.use(helmet());
+    app.use(cors());
+    app.use(express.json());
+
+    // Request Logging
+    app.use((req, res, next) => {
+        console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+        next();
+    });
+
     // Root health route
     app.get("/", (req, res) => {
+        console.log("Health check endpoint hit");
         res.status(200).json({
             status: "OK",
             service: "NeuroFlux OS Backend",
             version: "2.5.0",
             uptime: process.uptime()
         });
-});
-
-
-    app.use(compression());
-    app.use(helmet());
-    app.use(cors());
-    app.use(express.json());
+    });
 
     const limiter = rateLimit({
         windowMs: 15 * 60 * 1000,
@@ -195,29 +205,29 @@ function startServer() {
     });
 
     // --- AUTH ROUTES ---
-app.post('/api/auth/signup-init', async (req, res) => {
-    const { name, email, password } = req.body;
+    app.post('/api/auth/signup-init', async (req, res) => {
+        const { name, email, password } = req.body;
 
-    if (await findUserByEmail(email)) {
-        return res.status(400).json({ message: 'User exists' });
-    }
+        if (await findUserByEmail(email)) {
+            return res.status(400).json({ message: 'User exists' });
+        }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const hashedPassword = await bcrypt.hash(password, 10);
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-    otpStore.set(email, {
-        name,
-        email,
-        password: hashedPassword,
-        otp,
-        expires: Date.now() + 600000
-    });
+        otpStore.set(email, {
+            name,
+            email,
+            password: hashedPassword,
+            otp,
+            expires: Date.now() + 600000
+        });
 
-await transporter.sendMail({
-  from: `"NeuroFlux Security" <${process.env.EMAIL_USER}>`,
-  to: email,
-  subject: `NeuroFlux OS Secure Verification • ${Date.now()}`,
-  html: `
+        await transporter.sendMail({
+            from: `"NeuroFlux Security" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: `NeuroFlux OS Secure Verification • ${Date.now()}`,
+            html: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -343,12 +353,12 @@ await transporter.sendMail({
 </body>
 </html>
 `
-});
+        });
 
 
 
-    res.json({ message: 'OTP sent to email' });
-});
+        res.json({ message: 'OTP sent to email' });
+    });
 
 
     app.post('/api/auth/verify', async (req, res) => {
