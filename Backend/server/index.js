@@ -29,6 +29,16 @@ if (cluster.isPrimary && process.env.NODE_ENV === 'production') {
 
 function startServer() {
     const app = express();
+    // Root health route
+    app.get("/", (req, res) => {
+        res.status(200).json({
+            status: "OK",
+            service: "NeuroFlux OS Backend",
+            version: "2.5.0",
+            uptime: process.uptime()
+        });
+});
+
 
     app.use(compression());
     app.use(helmet());
