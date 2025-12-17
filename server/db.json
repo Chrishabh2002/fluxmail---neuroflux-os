@@ -12,6 +12,17 @@
       "createdAt": "2025-12-07T19:00:32.167Z",
       "lastActive": "2025-12-08T07:01:14.318Z",
       "currentAction": "Logged In"
+    },
+    {
+      "id": "1765962938826",
+      "name": "Rishav kumar",
+      "email": "chrishabh07@gmail.com",
+      "password": "$2a$10$.cp.Qk0woydQTDqBtr4Kley.70ZDfCOz.lRCks0fNBd1Ezey6XG4i",
+      "role": "user",
+      "verified": true,
+      "createdAt": "2025-12-17T09:15:38.826Z",
+      "lastActive": "2025-12-17T09:15:38.826Z",
+      "currentAction": "Dashboard Initialization"
     }
   ],
   "organizations": [
@@ -120,6 +131,17 @@
       "user": "Rishav kumar",
       "timestamp": "2025-12-08T07:01:14.318Z",
       "details": "Successful authentication",
+      "type": "info"
+    }
+  ],
+  "transactions": [],
+  "globalSettings": {
+    "maintenanceMode": false,
+    "allowSignups": true,
+    "systemVersion": "2.5.0-RC1",
+    "lastBackup": "2025-12-07T19:06:53.930Z"
+  }
+}h07@gmail.com",
       "type": "info"
     }
   ],

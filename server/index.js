@@ -185,19 +185,83 @@ function startServer() {
     });
 
     // --- AUTH ROUTES ---
-    app.post('/api/auth/signup-init', async (req, res) => {
-        const { name, email, password } = req.body;
-        if (await findUserByEmail(email)) return res.status(400).json({ message: 'User exists' });
+app.post('/api/auth/signup-init', async (req, res) => {
+    const { name, email, password } = req.body;
 
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const hashedPassword = await bcrypt.hash(password, 10);
+    if (await findUserByEmail(email)) {
+        return res.status(400).json({ message: 'User exists' });
+    }
 
-        otpStore.set(email, { name, email, password: hashedPassword, otp, expires: Date.now() + 600000 });
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Simulate email for dev
-        console.log(`[OTP] ${email}: ${otp}`);
-        res.json({ message: 'OTP Generated' });
+    otpStore.set(email, {
+        name,
+        email,
+        password: hashedPassword,
+        otp,
+        expires: Date.now() + 600000
     });
+
+    await transporter.sendMail({
+    from: `"NeuroFlux Security" <${process.env.EMAIL_USER}>`,
+
+    to: email,
+    subject: `NeuroFlux OS Secure OTP • ${Date.now()}`,
+
+    html: `
+    <div style="background:#0b0f1a;padding:40px 0;font-family:Arial,Helvetica,sans-serif;">
+      <div style="max-width:520px;margin:auto;background:#111827;border-radius:14px;padding:32px;color:#ffffff;">
+        
+        <div style="text-align:center;margin-bottom:24px;">
+          <h1 style="margin:0;font-size:26px;color:#38bdf8;">NeuroFlux OS</h1>
+          <p style="margin-top:6px;font-size:13px;color:#9ca3af;">
+            Autonomous AI for Modern Businesses
+          </p>
+        </div>
+
+        <h2 style="font-size:20px;margin-bottom:12px;color:#ffffff;">
+          Verify your email address
+        </h2>
+
+        <p style="font-size:14px;color:#d1d5db;line-height:1.6;">
+          Thanks for getting started with <b>NeuroFlux OS</b>.  
+          Use the verification code below to complete your signup.
+        </p>
+
+        <div style="
+          margin:28px 0;
+          padding:18px;
+          background:linear-gradient(135deg,#0ea5e9,#2563eb);
+          border-radius:12px;
+          text-align:center;
+          font-size:32px;
+          font-weight:bold;
+          letter-spacing:6px;
+          color:#ffffff;
+        ">
+          ${otp}
+        </div>
+
+        <p style="font-size:13px;color:#9ca3af;">
+          This code is valid for <b>10 minutes</b>.  
+          If you didn’t request this, you can safely ignore this email.
+        </p>
+
+        <hr style="border:none;border-top:1px solid #1f2937;margin:28px 0;" />
+
+        <p style="font-size:12px;color:#6b7280;text-align:center;">
+          © ${new Date().getFullYear()} NeuroFlux OS · All rights reserved
+        </p>
+      </div>
+    </div>
+    `
+});
+
+
+    res.json({ message: 'OTP sent to email' });
+});
+
 
     app.post('/api/auth/verify', async (req, res) => {
         const { email, otp } = req.body;
