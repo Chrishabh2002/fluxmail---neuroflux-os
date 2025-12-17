@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BrainCircuit, ArrowRight, Loader2 } from 'lucide-react';
+import { API_BASE_URL } from '../../config';
 
 export const Login: React.FC = () => {
     const navigate = useNavigate();
@@ -12,7 +13,7 @@ export const Login: React.FC = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:5003/api/auth/login', {
+            const res = await fetch(`${API_BASE_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })

@@ -3,6 +3,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Loader2, Lock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 // Replace with your actual Publishable Key from Stripe Dashboard
 const stripePromise = loadStripe('pk_test_51O...');
@@ -29,7 +30,7 @@ const CheckoutForm = ({ plan, price }: { plan: string, price: string }) => {
         try {
             const token = localStorage.getItem('neuroflux_token');
             if (token) {
-                const res = await fetch('http://localhost:5003/api/user/upgrade', {
+                const res = await fetch(`${API_BASE_URL}/user/upgrade`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BrainCircuit, ArrowRight, Loader2, CheckCircle2, Mail, RefreshCw } from 'lucide-react';
+import { API_BASE_URL } from '../../config';
 
 export const Signup: React.FC = () => {
     const navigate = useNavigate();
@@ -32,7 +33,7 @@ export const Signup: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/signup-init', {
+            const response = await fetch(`${API_BASE_URL}/auth/signup-init`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
@@ -46,7 +47,7 @@ export const Signup: React.FC = () => {
                 setTimeLeft(30);
                 // If dev mode (no email creds), the server logs the OTP. 
                 // In prod, it sends email.
-                if (data.message.includes("Check server console")) {
+                if (data.message && data.message.includes("Check server console")) {
                     alert("DEV MODE: Check your backend terminal for the OTP code!");
                 } else {
                     alert(`Verification code sent to ${formData.email}`);
@@ -74,7 +75,7 @@ export const Signup: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/verify', {
+            const response = await fetch(`${API_BASE_URL}/auth/verify`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -128,7 +129,7 @@ export const Signup: React.FC = () => {
 
         // Re-trigger signup init to resend email
         try {
-            const response = await fetch('http://localhost:5000/api/auth/signup-init', {
+            const response = await fetch(`${API_BASE_URL}/auth/signup-init`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)

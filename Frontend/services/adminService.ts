@@ -1,4 +1,5 @@
 import { SystemLog, User, SystemSettings } from '../types';
+import { API_BASE_URL } from '../config';
 
 // Types for Admin Service
 export interface SystemStats {
@@ -60,7 +61,7 @@ export interface UserDetails {
     };
 }
 
-const API_URL = 'http://localhost:5003/api/admin';
+const API_URL = `${API_BASE_URL}/admin`;
 
 export const adminService = {
     // --- Live Data Streams ---

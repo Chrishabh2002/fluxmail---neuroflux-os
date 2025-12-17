@@ -9,6 +9,7 @@ import {
   AnalyticsResponse, FluxVoiceResponse, VoiceCommandPlan,
   AppPackage, AdminActionResponse, CollabAIResponse, HintResponse
 } from "../types";
+import { API_BASE_URL } from "../config";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -395,7 +396,7 @@ const hintResponseSchema: Schema = {
 
 /* --- USAGE LIMIT HELPERS --- */
 
-const API_URL = 'http://localhost:5003/api';
+const API_URL = API_BASE_URL;
 
 const checkUsage = async () => {
   const token = localStorage.getItem('neuroflux_token');
