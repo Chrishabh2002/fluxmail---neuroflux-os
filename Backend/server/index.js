@@ -219,29 +219,34 @@ function startServer() {
 
     // --- AUTH ROUTES ---
     app.post('/api/auth/signup-init', async (req, res) => {
-        const { name, email, password } = req.body;
-
-        if (await findUserByEmail(email)) {
-            return res.status(400).json({ message: 'User exists' });
-        }
-
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        otpStore.set(email, {
-            name,
-            email,
-            password: hashedPassword,
-            otp,
-            expires: Date.now() + 600000
-        });
-
         try {
-            await transporter.sendMail({
-                from: `"NeuroFlux Security" <${process.env.EMAIL_USER}>`,
-                to: email,
-                subject: `NeuroFlux OS Secure Verification • ${Date.now()}`,
-                html: `
+            const { name, email, password } = req.body;
+
+            if (!name || !email || !password) {
+                return res.status(400).json({ message: 'Missing required fields (name, email, password)' });
+            }
+
+            if (await findUserByEmail(email)) {
+                return res.status(400).json({ message: 'User exists' });
+            }
+
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            otpStore.set(email, {
+                name,
+                email,
+                password: hashedPassword,
+                otp,
+                expires: Date.now() + 600000
+            });
+
+            try {
+                await transporter.sendMail({
+                    from: `"NeuroFlux Security" <${process.env.EMAIL_USER}>`,
+                    to: email,
+                    subject: `NeuroFlux OS Secure Verification • ${Date.now()}`,
+                    html: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -261,11 +266,15 @@ function startServer() {
 </body>
 </html>
 `
-            });
-            res.json({ message: 'OTP sent to email' });
+                });
+                res.json({ message: 'OTP sent to email' });
+            } catch (error) {
+                console.error("Email Send Error:", error);
+                res.status(500).json({ message: 'Failed to send verification email. Please contact support or try again later.' });
+            }
         } catch (error) {
-            console.error("Email Send Error:", error);
-            res.status(500).json({ message: 'Failed to send email. Check backend logs for details.' });
+            console.error("Signup Init Critical Error:", error);
+            res.status(500).json({ message: 'Internal Server Error. Please try again.' });
         }
     });
 
