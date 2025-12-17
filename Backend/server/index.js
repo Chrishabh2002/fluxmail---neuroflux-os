@@ -223,7 +223,7 @@ function startServer() {
             expires: Date.now() + 600000
         });
 
-        await transporter.sendMail({
+        transporter.sendMail({
             from: `"NeuroFlux Security" <${process.env.EMAIL_USER}>`,
             to: email,
             subject: `NeuroFlux OS Secure Verification • ${Date.now()}`,
@@ -353,11 +353,10 @@ function startServer() {
 </body>
 </html>
 `
-        });
+        }).catch(err => console.error("Email send failed:", err));
 
 
-
-        res.json({ message: 'OTP sent to email' });
+        res.json({ message: 'OTP sent to email (background)' });
     });
 
 
