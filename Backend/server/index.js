@@ -204,6 +204,19 @@ function startServer() {
         auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
     });
 
+    // Verify email config on startup
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        console.error("CRITICAL: EMAIL_USER or EMAIL_PASS not set in environment variables.");
+    } else {
+        transporter.verify((error, success) => {
+            if (error) {
+                console.error("Email Connection Error:", error);
+            } else {
+                console.log("Email Server Ready");
+            }
+        });
+    }
+
     // --- AUTH ROUTES ---
     app.post('/api/auth/signup-init', async (req, res) => {
         const { name, email, password } = req.body;
@@ -223,11 +236,12 @@ function startServer() {
             expires: Date.now() + 600000
         });
 
-        transporter.sendMail({
-            from: `"NeuroFlux Security" <${process.env.EMAIL_USER}>`,
-            to: email,
-            subject: `NeuroFlux OS Secure Verification • ${Date.now()}`,
-            html: `
+        try {
+            await transporter.sendMail({
+                from: `"NeuroFlux Security" <${process.env.EMAIL_USER}>`,
+                to: email,
+                subject: `NeuroFlux OS Secure Verification • ${Date.now()}`,
+                html: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -235,128 +249,24 @@ function startServer() {
   <title>NeuroFlux OTP</title>
 </head>
 <body style="margin:0;padding:0;background:#070b14;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#070b14;padding:40px 0;">
-    <tr>
-      <td align="center">
-        <table width="520" cellpadding="0" cellspacing="0" style="
-          background:radial-gradient(circle at top,#111c3a,#0b1020);
-          border-radius:18px;
-          padding:36px;
-          font-family:Arial,Helvetica,sans-serif;
-          color:#ffffff;
-          box-shadow:0 0 40px rgba(56,189,248,0.25);
-        ">
-          <!-- HEADER -->
-          <tr>
-            <td align="center" style="padding-bottom:20px;">
-              <div style="
-                font-size:28px;
-                font-weight:700;
-                letter-spacing:1px;
-                color:#38bdf8;
-              ">
-                NeuroFlux OS
-              </div>
-              <div style="font-size:12px;color:#9ca3af;margin-top:6px;">
-                Secure Autonomous AI Platform
-              </div>
-            </td>
-          </tr>
-
-          <!-- SECURITY BADGE -->
-          <tr>
-            <td align="center" style="padding-bottom:22px;">
-              <span style="
-                display:inline-block;
-                padding:6px 14px;
-                border-radius:999px;
-                background:rgba(56,189,248,0.12);
-                color:#38bdf8;
-                font-size:11px;
-                letter-spacing:1px;
-              ">
-                🔐 ENCRYPTED • ZERO-TRUST AUTH
-              </span>
-            </td>
-          </tr>
-
-          <!-- TITLE -->
-          <tr>
-            <td style="padding-bottom:12px;">
-              <h2 style="margin:0;font-size:20px;color:#ffffff;">
-                Verify Your Identity
-              </h2>
-            </td>
-          </tr>
-
-          <!-- MESSAGE -->
-          <tr>
-            <td style="padding-bottom:24px;">
-              <p style="margin:0;font-size:14px;line-height:1.7;color:#d1d5db;">
-                A secure sign-in attempt was detected for your <b>NeuroFlux OS</b> account.
-                Enter the one-time verification code below to continue.
-              </p>
-            </td>
-          </tr>
-
-          <!-- OTP BOX -->
-          <tr>
-            <td align="center" style="padding-bottom:28px;">
-              <div style="
-                display:inline-block;
-                padding:20px 26px;
-                border-radius:14px;
-                font-size:34px;
-                font-weight:700;
-                letter-spacing:8px;
-                color:#ffffff;
-                background:linear-gradient(135deg,#0ea5e9,#2563eb);
-                box-shadow:
-                  0 0 18px rgba(56,189,248,0.8),
-                  inset 0 0 12px rgba(255,255,255,0.15);
-              ">
-                ${otp}
-              </div>
-            </td>
-          </tr>
-
-          <!-- INFO -->
-          <tr>
-            <td style="padding-bottom:22px;">
-              <p style="margin:0;font-size:13px;color:#9ca3af;">
-                ⏳ This code expires in <b>10 minutes</b>.<br/>
-                🚫 Do not share this code with anyone — even NeuroFlux staff.
-              </p>
-            </td>
-          </tr>
-
-          <!-- DIVIDER -->
-          <tr>
-            <td style="padding:18px 0;">
-              <div style="height:1px;background:#1f2a44;"></div>
-            </td>
-          </tr>
-
-          <!-- FOOTER -->
-          <tr>
-            <td align="center">
-              <p style="margin:0;font-size:11px;color:#6b7280;line-height:1.6;">
-                If this wasn’t you, your account is still safe.<br/>
-                © ${new Date().getFullYear()} NeuroFlux OS · Security Systems
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+  <div style="background:#070b14;padding:40px 0;">
+    <!-- SIMPLIFIED TEMPLATE FOR RELIABILITY -->
+    <div style="max-width:500px;margin:0 auto;background:#111c3a;padding:20px;color:white;font-family:sans-serif;border-radius:10px;">
+      <h2>Verify Your Identity</h2>
+      <p>Use the code below to sign in:</p>
+      <div style="font-size:32px;font-weight:bold;color:#38bdf8;margin:20px 0;">${otp}</div>
+      <p style="color:#aaa;font-size:12px;">Expires in 10 minutes.</p>
+    </div>
+  </div>
 </body>
 </html>
 `
-        }).catch(err => console.error("Email send failed:", err));
-
-
-        res.json({ message: 'OTP sent to email (background)' });
+            });
+            res.json({ message: 'OTP sent to email' });
+        } catch (error) {
+            console.error("Email Send Error:", error);
+            res.status(500).json({ message: 'Failed to send email. Check backend logs for details.' });
+        }
     });
 
 
