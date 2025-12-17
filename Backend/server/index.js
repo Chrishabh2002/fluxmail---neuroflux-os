@@ -381,6 +381,7 @@ await transporter.sendMail({
         saveDB();
 
         const token = jwt.sign({ id: newUser.id }, 'secret', { expiresIn: '24h' });
+
         res.json({ token, user: newUser });
     });
 
